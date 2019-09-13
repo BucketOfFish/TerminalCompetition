@@ -28,6 +28,7 @@ class MyGameState(AdvancedGameState):
         defenders = []
         for location in path:
             defenders.append(self.get_attackers(location, player))
+        return defenders
 
     def rate_attack_positions(self, player):
         '''For each attack position, return a list of how many defenders are in range at each step.'''
