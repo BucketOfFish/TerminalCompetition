@@ -22,8 +22,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         SCRAMBLER = config["unitInformation"][5]["shorthand"]
 
         self.defense_library = self.get_defenses()
-        self.defense_strategy = "inverted_triangle"
-        self.attack_strategy = self.attack_scramblers
+        self.defense_strategy = "filter_line"
+        self.attack_strategy = self.send_pings
 
     def get_defenses(self):
         """
@@ -44,15 +44,20 @@ class AlgoStrategy(gamelib.AlgoCore):
         defense_library['edge_attack'] = make_build_list([[FILTER, filter_1], [DESTRUCTOR, destructor_1], [FILTER, filter_2], [DESTRUCTOR, destructor_2]])
 
         filter_1 = [[0, 13], [1, 12], [2, 11], [3, 10], [4, 9], [5, 8], [27, 13], [26, 12], [25, 11], [24, 10], [23, 9], [22, 8]]
-        destructor_1 = [[11, 7], [16, 7], [13, 9], [14, 9]]
-        filter_2 = [[12, 10], [15, 10]]
-        destructor_2 = [[11, 9], [16, 9]]
-        filter_3 = [[10, 10], [17, 10]]
-        destructor_3 = [[9, 9], [18, 9]]
-        filter_4 = [[8, 10], [19, 10]]
-        destructor_4 = [[9, 9], [18, 9], [10, 8], [17, 8]]
-        filter_5 = [[11, 10], [16, 10], [9, 10], [18, 10]]
-        defense_library['inverted_triangle'] = make_build_list([[FILTER, filter_1], [DESTRUCTOR, destructor_1], [FILTER, filter_2], [DESTRUCTOR, destructor_2], [FILTER, filter_3], [DESTRUCTOR, destructor_3], [FILTER, filter_4], [DESTRUCTOR, destructor_4], [FILTER, filter_5]])
+        destructor_1 = [[10, 7], [17, 7], [12, 9], [15, 9]]
+        destructor_2 = [[10, 9], [17, 9], [11, 10], [16, 10], [7, 10], [20, 10]]
+        destructor_3 = [[9, 8], [18, 8], [8, 9], [19, 9]]
+        destructor_4 = [[8, 9], [19, 9], [9, 8], [18, 8], [13, 9], [14, 9], [11, 6], [16, 6], [6, 11], [21, 11]]
+        defense_library['inverted_triangle'] = make_build_list([[FILTER, filter_1], [DESTRUCTOR, destructor_1], [DESTRUCTOR, destructor_2], [DESTRUCTOR, destructor_3], [DESTRUCTOR, destructor_4]])
+
+        filter_1 = [[27-i, 13] for i in range(26)]
+        destructor_1 = [[26-i, 12] for i in range(24)]
+        defense_library['filter_line'] = make_build_list([[FILTER, filter_1], [DESTRUCTOR, destructor_1]])
+
+        # filter_1 = []
+        # for i in range(
+        # destructor_1 = [[26-i, 12] for i in range(24)]
+        # defense_library['filter_line'] = make_build_list([[FILTER, filter_1], [DESTRUCTOR, destructor_1]])
 
         return defense_library
 
@@ -78,11 +83,13 @@ class AlgoStrategy(gamelib.AlgoCore):
             if game_state.can_spawn(unit_type, location):
                 game_state.attempt_spawn(unit_type, location)
 
-    def attack_scramblers(self, game_state):
-        game_state.attempt_spawn(SCRAMBLER, [7, 6])
-        game_state.attempt_spawn(SCRAMBLER, [20, 6])
-        game_state.attempt_spawn(SCRAMBLER, [9, 4])
-        game_state.attempt_spawn(SCRAMBLER, [18, 4])
+    def send_pings(self, game_state):
+        if game_state.get_resource(game_state.BITS) >= game_state.type_cost(PING)*11:
+            game_state.attempt_spawn(PING, [14, 0], 11)
+
+    def send_emps(self, game_state):
+        if game_state.get_resource(game_state.BITS) >= game_state.type_cost(EMP)*3:
+            game_state.attempt_spawn(EMP, [11, 2], 3)
 
 
 if __name__ == "__main__":
