@@ -22,6 +22,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         SCRAMBLER = config["unitInformation"][5]["shorthand"]
 
         self.defense_library = self.get_defenses()
+        self.defense_strategy = "inverted_triangle"
+        self.attack_strategy = self.attack_scramblers
 
     def get_defenses(self):
         """
@@ -67,13 +69,20 @@ class AlgoStrategy(gamelib.AlgoCore):
         # game_state.suppress_warnings(True)  #Uncomment this line to suppress warnings.
 
         self.defend(game_state)
+        self.attack_strategy(game_state)
 
         game_state.submit_turn()
 
     def defend(self, game_state):
-        for unit_type, location in self.defense_library["inverted_triangle"]:
+        for unit_type, location in self.defense_library[self.defense_strategy]:
             if game_state.can_spawn(unit_type, location):
                 game_state.attempt_spawn(unit_type, location)
+
+    def attack_scramblers(self, game_state):
+        game_state.attempt_spawn(SCRAMBLER, [7, 6])
+        game_state.attempt_spawn(SCRAMBLER, [20, 6])
+        game_state.attempt_spawn(SCRAMBLER, [9, 4])
+        game_state.attempt_spawn(SCRAMBLER, [18, 4])
 
 
 if __name__ == "__main__":
