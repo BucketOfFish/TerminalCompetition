@@ -120,7 +120,16 @@ class AlgoStrategy(gamelib.AlgoCore):
     def deploy_attackers(self, game_state):
         if (self.bits < 15):
             return
-        game_state.attempt_spawn(EMP, [12 + 3*random.randint(0, 1), 1], 5)
+        friendly_edges = game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_LEFT) + game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_RIGHT)
+        possible_locations = self.filter_blocked_locations(friendly_edges, game_state)
+        minDefenders = float('inf')
+        index=0
+        for i, location in enumerate(possible_locations):
+            if (len(game_state.rate_attack_positions(location) < maxDefenders:
+                minDefenders= len(game_state.rate_attack_positions(location))
+                index = i
+
+            game_state.attempt_spawn(EMP, location[index], 5)
 
 
 if __name__ == "__main__":
