@@ -83,7 +83,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         filter_locations_1= [[0,13],[1,13],[2,13],[3,12],[4,11],[5,10],[22,10],[23,11],[24,12],[25,13],[26,13],[27,13]]
         destructor_locations_1 = [[10,9],[17,9],[9,9],[18,9]]
-        filter_locations_2 =([[11,10],[16,10],[7,10],[20,10],[6,10],[21,10],[12,10],[15,10],[8,10,][19,10]]])
+        filter_locations_2 =[[11,10],[16,10],[7,10],[20,10],[6,10],[21,10],[12,10],[15,10],[8,10,],[19,10]]
         destructor_locations_2 = [[13,9],[14,9],[12,9],[15,9],[11,9],[16,9]]
         possible_filter_locations_1 = self.filter_blocked_locations(filter_locations_1, game_state)
         possible_filter_locations_2 = self.filter_blocked_locations(filter_locations_2, game_state)
