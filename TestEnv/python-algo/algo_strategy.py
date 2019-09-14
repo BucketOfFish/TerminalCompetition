@@ -80,46 +80,28 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def build_defences(self, game_state):
-        """
-        Diamond shape filter firewall
-        """
-        destructor_locations = [[13,0],[14,0]]
-        firewall_locations = [[13-i,i] for i in range(14)]
-        firewall_locations.extend([[14+13-i,13-i] for i in range(13)])
-        possible_firewall_locations = self.filter_blocked_locations(firewall_locations, game_state)
-        #possible_destructor_locations = self.filter_blocked_locations(destructor_locations,game_state)
-        """
-        Start by making destructors
-        """
-        for location in destructor_locations:
-            if game_state.can_spawn(DESTRUCTOR, location):
-                game_state.attempt_spawn(DESTRUCTOR, location)
-        """
-        Determine number of important things we can make
-        """
-        num_filters=game_state.number_affordable(FILTER)
-        #num_destructors=game_state.number_affordable(self,DESTRUCTOR)
-        num_ping=game_state.number_affordable(PING)
+
+        filter_locations_1= [[0,13],[1,13],[2,13],[3,12],[4,11],[5,10],[22,10],[23,11],[24,12],[25,13],[26,13],[27,13]]
+        destructor_locations_1 = [[10,9],[17,9],[9,9],[18,9]]
+        filter_locations_2 =([[11,10],[16,10],[7,10],[20,10],[6,10],[21,10],[12,10],[15,10],[8,10,][19,10]]])
+        destructor_locations_2 = [[13,9],[14,9],[12,9],[15,9],[11,9],[16,9]]
+        possible_filter_locations_1 = self.filter_blocked_locations(filter_locations_1, game_state)
+        possible_filter_locations_2 = self.filter_blocked_locations(filter_locations_2, game_state)
+        possible_destructor_locations_1 = self.filter_blocked_locations(destructor_locations_1, game_state)
+        possible_destructor_locations_2 = self.filter_blocked_locations(destructor_locations_2, game_state)
         
-        friendly_edges = game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_LEFT) + game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_RIGHT)
-        new_locations = possible_firewall_locations
-        
-        if (game_state.get_resource(game_state.BITS) > 11):
-            for location in possible_firewall_locations:
-                if game_state.can_spawn(PING, location, num_ping):
-                    game_state.attempt_spawn(PING, location, num_ping)
-                    new_locations.remove(location)
-        """
-        Then determine whether to reenforce defense with destructors
-        """
-        possible_firewall_locations=new_locations
-        possible_locations=len(possible_firewall_locations)
-        if num_filters > (possible_locations + game_state.type_cost(DESTRUCTOR)) and (possible_locations>0):
-                if game_state.can_spawn(DESTRUCTOR, possible_firewall_locations[0]):
-                    game_state.attempt_spawn(DESTRUCTOR, possible_firewall_locations[0])
-        for location in possible_firewall_locations:
+        for location in possible_filter_locations_1:
             if game_state.can_spawn(FILTER, location):
                 game_state.attempt_spawn(FILTER,location)
+        for location in possible_destructor_locations_1:
+            if game_state.can_spawn(DESTRUCTOR, location):
+                game_state.attempt_spawn(DESTRUCTOR,location)
+        for location in possible_filter_locations_2:
+            if game_state.can_spawn(FILTER, location):
+                game_state.attempt_spawn(FILTER,location)
+        for location in possible_destructor_locations_2:
+            if game_state.can_spawn(DESTRUCTOR, location):
+                game_state.attempt_spawn(DESTRUCTOR,location)
 
  
 
