@@ -23,7 +23,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         self.defense_library = self.get_defenses()
         self.defense_strategy = "funnel"
-        self.attack_strategy = self.send_pings
+        self.attack_strategy = self.ramp_attack
 
     def get_defenses(self):
         """
@@ -53,12 +53,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         filter_1 = [[i, 13] for i in range(26)]
         destructor_1 = [[24-i, 12] for i in range(24)]
         defense_library['filter_line'] = make_build_list([[FILTER, filter_1], [DESTRUCTOR, destructor_1]])
-
-        # filter_1 = []
-        # for i in range(12):
-            # filter_1.append([i, 13-i])
-            # filter_1.append([27-i, 13-i])
-        # defense_library['zigzag'] = make_build_list([[FILTER, filter_1]])
 
         filter_1 = [[0, 13], [1, 12], [2, 11], [4, 11], [6, 11], [21, 11], [23, 11], [25, 11], [26, 12], [27, 13]]
         encryptor_1 = [[3, 10], [5, 10], [22, 10], [24, 10]]
@@ -111,16 +105,28 @@ class AlgoStrategy(gamelib.AlgoCore):
         if game_state.get_resource(game_state.BITS) >= game_state.type_cost(PING)*11:
             game_state.attempt_spawn(PING, [13, 0], 11)
 
-    def send_pings(self, game_state):
-        if game_state.get_resource(game_state.BITS) >= game_state.type_cost(PING)*15:
-            game_state.attempt_spawn(PING, [11, 2], 15)
-        elif game_state.turn_number <= 15:
-            game_state.attempt_spawn(SCRAMBLER, [11, 2], 1)
-            game_state.attempt_spawn(SCRAMBLER, [16, 2], 1)
+    def ramp_attack(self, game_state):
+        if game_state.turn_number <= 15:
+            self.send_pings(game_state, 15)
+            self.send_scramblers()
+        elif game_state.turn_number <= 30:
+            self.send_emps(game_state, 5)
+        elif game_state.turn_number <= 50:
+            self.send_emps(game_state, 7)
+        else:
+            self.send_emps(game_state, 9)
 
-    def send_emps(self, game_state):
-        if game_state.get_resource(game_state.BITS) >= game_state.type_cost(EMP)*5:
-            game_state.attempt_spawn(EMP, [11, 2], 5)
+    def send_scramblers(self, game_state):
+        game_state.attempt_spawn(SCRAMBLER, [11, 2], 1)
+        game_state.attempt_spawn(SCRAMBLER, [16, 2], 1)
+
+    def send_pings(self, game_state, n_pings):
+        if game_state.get_resource(game_state.BITS) >= game_state.type_cost(PING)*n_pings:
+            game_state.attempt_spawn(PING, [11, 2], n_pings)
+
+    def send_emps(self, game_state, n_emps):
+        if game_state.get_resource(game_state.BITS) >= game_state.type_cost(EMP)*n_emps:
+            game_state.attempt_spawn(EMP, [11, 2], n_emps)
 
 
 if __name__ == "__main__":
